@@ -1,0 +1,15 @@
+F:\repos\dotnet-intro\primeiro-projeto\bin\Debug\net6.0\ParOuImpar.exe
+F:\repos\dotnet-intro\primeiro-projeto\bin\Debug\net6.0\ParOuImpar.deps.json
+F:\repos\dotnet-intro\primeiro-projeto\bin\Debug\net6.0\ParOuImpar.runtimeconfig.json
+F:\repos\dotnet-intro\primeiro-projeto\bin\Debug\net6.0\ParOuImpar.dll
+F:\repos\dotnet-intro\primeiro-projeto\bin\Debug\net6.0\ParOuImpar.pdb
+F:\repos\dotnet-intro\primeiro-projeto\obj\Debug\net6.0\ParOuImpar.csproj.AssemblyReference.cache
+F:\repos\dotnet-intro\primeiro-projeto\obj\Debug\net6.0\ParOuImpar.GeneratedMSBuildEditorConfig.editorconfig
+F:\repos\dotnet-intro\primeiro-projeto\obj\Debug\net6.0\ParOuImpar.AssemblyInfoInputs.cache
+F:\repos\dotnet-intro\primeiro-projeto\obj\Debug\net6.0\ParOuImpar.AssemblyInfo.cs
+F:\repos\dotnet-intro\primeiro-projeto\obj\Debug\net6.0\ParOuImpar.csproj.CoreCompileInputs.cache
+F:\repos\dotnet-intro\primeiro-projeto\obj\Debug\net6.0\ParOuImpar.dll
+F:\repos\dotnet-intro\primeiro-projeto\obj\Debug\net6.0\refint\ParOuImpar.dll
+F:\repos\dotnet-intro\primeiro-projeto\obj\Debug\net6.0\ParOuImpar.pdb
+F:\repos\dotnet-intro\primeiro-projeto\obj\Debug\net6.0\ParOuImpar.genruntimeconfig.cache
+F:\repos\dotnet-intro\primeiro-projeto\obj\Debug\net6.0\ref\ParOuImpar.dll

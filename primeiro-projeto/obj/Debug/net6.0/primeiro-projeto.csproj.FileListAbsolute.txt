@@ -1,0 +1,15 @@
+F:\repos\dotnet-intro\primeiro-projeto\bin\Debug\net6.0\primeiro-projeto.exe
+F:\repos\dotnet-intro\primeiro-projeto\bin\Debug\net6.0\primeiro-projeto.deps.json
+F:\repos\dotnet-intro\primeiro-projeto\bin\Debug\net6.0\primeiro-projeto.runtimeconfig.json
+F:\repos\dotnet-intro\primeiro-projeto\bin\Debug\net6.0\primeiro-projeto.dll
+F:\repos\dotnet-intro\primeiro-projeto\bin\Debug\net6.0\primeiro-projeto.pdb
+F:\repos\dotnet-intro\primeiro-projeto\obj\Debug\net6.0\primeiro-projeto.csproj.AssemblyReference.cache
+F:\repos\dotnet-intro\primeiro-projeto\obj\Debug\net6.0\primeiro-projeto.GeneratedMSBuildEditorConfig.editorconfig
+F:\repos\dotnet-intro\primeiro-projeto\obj\Debug\net6.0\primeiro-projeto.AssemblyInfoInputs.cache
+F:\repos\dotnet-intro\primeiro-projeto\obj\Debug\net6.0\primeiro-projeto.AssemblyInfo.cs
+F:\repos\dotnet-intro\primeiro-projeto\obj\Debug\net6.0\primeiro-projeto.csproj.CoreCompileInputs.cache
+F:\repos\dotnet-intro\primeiro-projeto\obj\Debug\net6.0\primeiro-projeto.dll
+F:\repos\dotnet-intro\primeiro-projeto\obj\Debug\net6.0\refint\primeiro-projeto.dll
+F:\repos\dotnet-intro\primeiro-projeto\obj\Debug\net6.0\primeiro-projeto.pdb
+F:\repos\dotnet-intro\primeiro-projeto\obj\Debug\net6.0\primeiro-projeto.genruntimeconfig.cache
+F:\repos\dotnet-intro\primeiro-projeto\obj\Debug\net6.0\ref\primeiro-projeto.dll
