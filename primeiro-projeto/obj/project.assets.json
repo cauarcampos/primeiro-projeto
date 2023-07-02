@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "F:\\repos\\dotnet-intro\\primeiro-projeto\\ParOuImpar.csproj",
+      "projectUniqueName": "F:\\repos\\primeiro-projeto\\primeiro-projeto\\ParOuImpar.csproj",
       "projectName": "ParOuImpar",
-      "projectPath": "F:\\repos\\dotnet-intro\\primeiro-projeto\\ParOuImpar.csproj",
+      "projectPath": "F:\\repos\\primeiro-projeto\\primeiro-projeto\\ParOuImpar.csproj",
       "packagesPath": "C:\\Users\\pep_t\\.nuget\\packages\\",
-      "outputPath": "F:\\repos\\dotnet-intro\\primeiro-projeto\\obj\\",
+      "outputPath": "F:\\repos\\primeiro-projeto\\primeiro-projeto\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\pep_t\\AppData\\Roaming\\NuGet\\NuGet.Config",

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "a9Z3WxlHhDdxFKh8Kps6tjRUUMAIfj8EoFQTh7XgIoocXenFrZXzuymOud1me/KCWkJXvMMB0BUwA67RD+Uq7A==",
+  "dgSpecHash": "NDuHMGtP5B+1cpPPkT6CTjWaOFjF0q2urmR35A5ME7mcmr7Ws5Ku/Bdd6rG85mPMeQy79rmPLVTg064flNyYvg==",
   "success": true,
-  "projectFilePath": "F:\\repos\\dotnet-intro\\DiaDaSemana\\DiaDaSemana.csproj",
+  "projectFilePath": "F:\\repos\\primeiro-projeto\\DiaDaSemana\\DiaDaSemana.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

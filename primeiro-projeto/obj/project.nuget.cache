@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "0b4alxR3yzeXqGXP6eaebqK1iApnoSMLS/7m7PLQNJ5lJngf/KOcqcHv/s7s4LuhpYeqR/bIGpbQVg6rz2mHuQ==",
+  "dgSpecHash": "Cc79QTP7rzt91JJz85DMECKg5NQiPWSUjiFvKI9cc8jFEoBZKdJZesGG/2CLz03MGUyrBBVGYTod5heotXeVWA==",
   "success": true,
-  "projectFilePath": "F:\\repos\\dotnet-intro\\primeiro-projeto\\ParOuImpar.csproj",
+  "projectFilePath": "F:\\repos\\primeiro-projeto\\primeiro-projeto\\ParOuImpar.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "F:\\repos\\dotnet-intro\\DiaDaSemana\\DiaDaSemana.csproj",
+      "projectUniqueName": "F:\\repos\\primeiro-projeto\\DiaDaSemana\\DiaDaSemana.csproj",
       "projectName": "DiaDaSemana",
-      "projectPath": "F:\\repos\\dotnet-intro\\DiaDaSemana\\DiaDaSemana.csproj",
+      "projectPath": "F:\\repos\\primeiro-projeto\\DiaDaSemana\\DiaDaSemana.csproj",
       "packagesPath": "C:\\Users\\pep_t\\.nuget\\packages\\",
-      "outputPath": "F:\\repos\\dotnet-intro\\DiaDaSemana\\obj\\",
+      "outputPath": "F:\\repos\\primeiro-projeto\\DiaDaSemana\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\pep_t\\AppData\\Roaming\\NuGet\\NuGet.Config",

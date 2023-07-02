@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "XSOfh9lOpsIVj1sUJMF4zhtLmsDnPN0sSNaDsQNqbkdCOgCCcI5G/HqTAGK8nX0bK/7PDEIP9Qd7syKn4KKCkA==",
+  "dgSpecHash": "r0RXH0d4V2PEiTFPweeJUTdpuJCUhysb/oydUesYCzAF7X9/wTkPuGSVQ4iwIjD0nr+8Ryr+vYgR1TNCy8hrKg==",
   "success": true,
-  "projectFilePath": "F:\\repos\\dotnet-intro\\Tabuada\\Tabuada.csproj",
+  "projectFilePath": "F:\\repos\\primeiro-projeto\\Tabuada\\Tabuada.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

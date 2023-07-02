@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "F:\\repos\\dotnet-intro\\Tabuada\\Tabuada.csproj": {}
+    "F:\\repos\\primeiro-projeto\\Tabuada\\Tabuada.csproj": {}
   },
   "projects": {
-    "F:\\repos\\dotnet-intro\\Tabuada\\Tabuada.csproj": {
+    "F:\\repos\\primeiro-projeto\\Tabuada\\Tabuada.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "F:\\repos\\dotnet-intro\\Tabuada\\Tabuada.csproj",
+        "projectUniqueName": "F:\\repos\\primeiro-projeto\\Tabuada\\Tabuada.csproj",
         "projectName": "Tabuada",
-        "projectPath": "F:\\repos\\dotnet-intro\\Tabuada\\Tabuada.csproj",
+        "projectPath": "F:\\repos\\primeiro-projeto\\Tabuada\\Tabuada.csproj",
         "packagesPath": "C:\\Users\\pep_t\\.nuget\\packages\\",
-        "outputPath": "F:\\repos\\dotnet-intro\\Tabuada\\obj\\",
+        "outputPath": "F:\\repos\\primeiro-projeto\\Tabuada\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\pep_t\\AppData\\Roaming\\NuGet\\NuGet.Config",
