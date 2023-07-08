@@ -2,4 +2,11 @@
 # Este arquivo .gitignore foi criado automaticamente pelo Microsoft(R) Visual Studio.
 ################################################################################
 
-/primeiro-projeto/.vs/primeiro-projeto/FileContentIndex/bc1914a0-d6c4-4565-aad0-1bd1dff7c1c1.vsidx
+/primeiro-projeto/obj/Debug/net6.0/ParOuImpar.pdb
+/primeiro-projeto/obj/Debug/net6.0/ParOuImpar.genruntimeconfig.cache
+/primeiro-projeto/obj/Debug/net6.0/ParOuImpar.dll
+/primeiro-projeto/obj/Debug/net6.0/ParOuImpar.csproj.FileListAbsolute.txt
+/primeiro-projeto/bin/Debug/net6.0/ParOuImpar.pdb
+/primeiro-projeto/bin/Debug/net6.0/ParOuImpar.dll
+/primeiro-projeto/.vs/primeiro-projeto/v17/.suo
+/primeiro-projeto/.vs/primeiro-projeto/FileContentIndex/e71020e5-c83d-496a-a874-5314fb079fa6.vsidx
