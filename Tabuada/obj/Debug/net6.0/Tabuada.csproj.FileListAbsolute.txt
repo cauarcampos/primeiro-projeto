@@ -1,0 +1,15 @@
+F:\repos\primeiro-projeto\Tabuada\bin\Debug\net6.0\Tabuada.exe
+F:\repos\primeiro-projeto\Tabuada\bin\Debug\net6.0\Tabuada.deps.json
+F:\repos\primeiro-projeto\Tabuada\bin\Debug\net6.0\Tabuada.runtimeconfig.json
+F:\repos\primeiro-projeto\Tabuada\bin\Debug\net6.0\Tabuada.dll
+F:\repos\primeiro-projeto\Tabuada\bin\Debug\net6.0\Tabuada.pdb
+F:\repos\primeiro-projeto\Tabuada\obj\Debug\net6.0\Tabuada.csproj.AssemblyReference.cache
+F:\repos\primeiro-projeto\Tabuada\obj\Debug\net6.0\Tabuada.GeneratedMSBuildEditorConfig.editorconfig
+F:\repos\primeiro-projeto\Tabuada\obj\Debug\net6.0\Tabuada.AssemblyInfoInputs.cache
+F:\repos\primeiro-projeto\Tabuada\obj\Debug\net6.0\Tabuada.AssemblyInfo.cs
+F:\repos\primeiro-projeto\Tabuada\obj\Debug\net6.0\Tabuada.csproj.CoreCompileInputs.cache
+F:\repos\primeiro-projeto\Tabuada\obj\Debug\net6.0\Tabuada.dll
+F:\repos\primeiro-projeto\Tabuada\obj\Debug\net6.0\refint\Tabuada.dll
+F:\repos\primeiro-projeto\Tabuada\obj\Debug\net6.0\Tabuada.pdb
+F:\repos\primeiro-projeto\Tabuada\obj\Debug\net6.0\Tabuada.genruntimeconfig.cache
+F:\repos\primeiro-projeto\Tabuada\obj\Debug\net6.0\ref\Tabuada.dll
