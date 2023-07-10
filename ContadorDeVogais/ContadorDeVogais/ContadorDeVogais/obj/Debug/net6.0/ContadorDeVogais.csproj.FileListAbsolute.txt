@@ -1,0 +1,15 @@
+E:\repos\primeiro-projeto\ContadorDeVogais\ContadorDeVogais\ContadorDeVogais\obj\Debug\net6.0\ContadorDeVogais.csproj.AssemblyReference.cache
+E:\repos\primeiro-projeto\ContadorDeVogais\ContadorDeVogais\ContadorDeVogais\obj\Debug\net6.0\ContadorDeVogais.GeneratedMSBuildEditorConfig.editorconfig
+E:\repos\primeiro-projeto\ContadorDeVogais\ContadorDeVogais\ContadorDeVogais\obj\Debug\net6.0\ContadorDeVogais.AssemblyInfoInputs.cache
+E:\repos\primeiro-projeto\ContadorDeVogais\ContadorDeVogais\ContadorDeVogais\obj\Debug\net6.0\ContadorDeVogais.AssemblyInfo.cs
+E:\repos\primeiro-projeto\ContadorDeVogais\ContadorDeVogais\ContadorDeVogais\obj\Debug\net6.0\ContadorDeVogais.csproj.CoreCompileInputs.cache
+E:\repos\primeiro-projeto\ContadorDeVogais\ContadorDeVogais\ContadorDeVogais\bin\Debug\net6.0\ContadorDeVogais.exe
+E:\repos\primeiro-projeto\ContadorDeVogais\ContadorDeVogais\ContadorDeVogais\bin\Debug\net6.0\ContadorDeVogais.deps.json
+E:\repos\primeiro-projeto\ContadorDeVogais\ContadorDeVogais\ContadorDeVogais\bin\Debug\net6.0\ContadorDeVogais.runtimeconfig.json
+E:\repos\primeiro-projeto\ContadorDeVogais\ContadorDeVogais\ContadorDeVogais\bin\Debug\net6.0\ContadorDeVogais.dll
+E:\repos\primeiro-projeto\ContadorDeVogais\ContadorDeVogais\ContadorDeVogais\bin\Debug\net6.0\ContadorDeVogais.pdb
+E:\repos\primeiro-projeto\ContadorDeVogais\ContadorDeVogais\ContadorDeVogais\obj\Debug\net6.0\ContadorDeVogais.dll
+E:\repos\primeiro-projeto\ContadorDeVogais\ContadorDeVogais\ContadorDeVogais\obj\Debug\net6.0\refint\ContadorDeVogais.dll
+E:\repos\primeiro-projeto\ContadorDeVogais\ContadorDeVogais\ContadorDeVogais\obj\Debug\net6.0\ContadorDeVogais.pdb
+E:\repos\primeiro-projeto\ContadorDeVogais\ContadorDeVogais\ContadorDeVogais\obj\Debug\net6.0\ContadorDeVogais.genruntimeconfig.cache
+E:\repos\primeiro-projeto\ContadorDeVogais\ContadorDeVogais\ContadorDeVogais\obj\Debug\net6.0\ref\ContadorDeVogais.dll
