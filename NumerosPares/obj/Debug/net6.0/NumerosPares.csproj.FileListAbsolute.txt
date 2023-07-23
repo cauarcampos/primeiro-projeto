@@ -1,0 +1,15 @@
+F:\repos\primeiro-projeto\NumerosPares\bin\Debug\net6.0\NumerosPares.exe
+F:\repos\primeiro-projeto\NumerosPares\bin\Debug\net6.0\NumerosPares.deps.json
+F:\repos\primeiro-projeto\NumerosPares\bin\Debug\net6.0\NumerosPares.runtimeconfig.json
+F:\repos\primeiro-projeto\NumerosPares\bin\Debug\net6.0\NumerosPares.dll
+F:\repos\primeiro-projeto\NumerosPares\bin\Debug\net6.0\NumerosPares.pdb
+F:\repos\primeiro-projeto\NumerosPares\obj\Debug\net6.0\NumerosPares.csproj.AssemblyReference.cache
+F:\repos\primeiro-projeto\NumerosPares\obj\Debug\net6.0\NumerosPares.GeneratedMSBuildEditorConfig.editorconfig
+F:\repos\primeiro-projeto\NumerosPares\obj\Debug\net6.0\NumerosPares.AssemblyInfoInputs.cache
+F:\repos\primeiro-projeto\NumerosPares\obj\Debug\net6.0\NumerosPares.AssemblyInfo.cs
+F:\repos\primeiro-projeto\NumerosPares\obj\Debug\net6.0\NumerosPares.csproj.CoreCompileInputs.cache
+F:\repos\primeiro-projeto\NumerosPares\obj\Debug\net6.0\NumerosPares.dll
+F:\repos\primeiro-projeto\NumerosPares\obj\Debug\net6.0\refint\NumerosPares.dll
+F:\repos\primeiro-projeto\NumerosPares\obj\Debug\net6.0\NumerosPares.pdb
+F:\repos\primeiro-projeto\NumerosPares\obj\Debug\net6.0\NumerosPares.genruntimeconfig.cache
+F:\repos\primeiro-projeto\NumerosPares\obj\Debug\net6.0\ref\NumerosPares.dll
