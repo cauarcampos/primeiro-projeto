@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tabuada", "..\Tabuada\Tabua
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiaDaSemana", "..\DiaDaSemana\DiaDaSemana.csproj", "{D57A4045-8597-4699-95FC-CCB3DCB2144B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "celsiusFahrenheit", "..\celsiusFahrenheit\celsiusFahrenheit.csproj", "{77A54E9F-01EA-476B-8CEF-84B59D3F71F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "celsiusFahrenheit", "..\celsiusFahrenheit\celsiusFahrenheit.csproj", "{77A54E9F-01EA-476B-8CEF-84B59D3F71F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NumerosPares", "..\NumerosPares\NumerosPares.csproj", "{28685C15-5EED-48BE-9E61-DCEB907E765B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{77A54E9F-01EA-476B-8CEF-84B59D3F71F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77A54E9F-01EA-476B-8CEF-84B59D3F71F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77A54E9F-01EA-476B-8CEF-84B59D3F71F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28685C15-5EED-48BE-9E61-DCEB907E765B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28685C15-5EED-48BE-9E61-DCEB907E765B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28685C15-5EED-48BE-9E61-DCEB907E765B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28685C15-5EED-48BE-9E61-DCEB907E765B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
