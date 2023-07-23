@@ -1,23 +1,17 @@
-﻿< meta charset = "UTF-8" >
+﻿using System;
 
-< script >
-function pulaLinha() {
-    document.write("<br>");
-}
-function mostra(frase)
+class Program
 {
-    document.write(frase);
-    pulaLinha();
+    static void Main()
+    {
+        int num = 1;
+
+        while (num <= 100)
+        {
+            Console.WriteLine(num);
+            num += 2;
+        }
+
+        Console.WriteLine("FIM");
+    }
 }
-
-var num = 1;
-
-while (num <= 97)
-{
-    num += 2;
-    mostra(num);
-}
-
-mostra("FIM");
-
-</ script >
