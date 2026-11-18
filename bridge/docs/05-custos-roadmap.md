@@ -22,6 +22,19 @@ Preços de referência de nov/2026; confirmar na contratação. Estimativa de 1 
 
 Prompt caching da instrução fixa e do glossário reduz o custo de entrada do LLM.
 
+### Plano custo zero (recomendado para começar)
+
+| Item | Opção gratuita |
+|---|---|
+| Reconhecimento de voz | Whisper local (faster-whisper / whisper.cpp) |
+| Tradução | NLLB local; ou camada gratuita de API (DeepL Free: 500 mil caracteres/mês ≈ 9 h de conversa; Azure Translator F0 ⚠️ ~2 M caracteres/mês) |
+| Servidor | Nenhum nos modos Computador e Ambiente (tudo roda no aparelho). Na Chamada BRIDGE: VM gratuita (ex.: Oracle Cloud Always Free ⚠️) ou o próprio PC de casa |
+| iPhone | Versão web (navegador) em vez de app nativo, ou instalação gratuita pelo Xcode (expira a cada 7 dias) |
+| Voz (Fase 2) | Piper + OpenVoice v2, locais |
+
+Custo mensal: **R$ 0**. O preço é hardware (PC com 8–16 GB de RAM; placa de vídeo ajuda mas não é obrigatória)
+e, com NLLB, uma tradução menos natural. Serviços pagos só entram se o benchmark mostrar que valem a pena.
+
 ## Roadmap
 
 ### S0 — Spikes de viabilidade (1–2 semanas)
