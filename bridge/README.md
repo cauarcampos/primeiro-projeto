@@ -8,8 +8,8 @@ com legendas traduzidas (Fase 1), voz traduzida (Fase 2) e conversa quase natura
 | Item | Estado |
 |---|---|
 | Etapa 1 — Planejamento técnico | **Concluído (este documento)** |
-| Etapa 2 — MVP | Não iniciado — nenhum código de aplicativo existe ainda |
-| Etapa 3 — Testes | Plano definido, nada implementado |
+| Etapa 2 — MVP | **Protótipo no computador pronto** ([poc/](poc/README.md)): modos Computador e Ambiente, 100% local. Falta testar no Windows real. App de celular não iniciado |
+| Etapa 3 — Testes | Testes automáticos do protótipo + benchmark com gravações reais (FLEURS) |
 | Etapa 4 — Evolução (voz, clonagem) | Apenas pesquisa |
 
 > Regra do projeto: nada aqui deve ser descrito como funcional antes de existir código e teste que comprovem.

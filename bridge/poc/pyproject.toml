@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bridge-poc"
+version = "0.1.0"
+description = "BRIDGE — legendas traduzidas pt-BR <-> uk-UA em tempo real, 100% local"
+requires-python = ">=3.10,<3.14"
+dependencies = [
+    "faster-whisper>=1.2,<2",          # reconhecimento de fala (inclui o Silero VAD em ONNX)
+    "ctranslate2>=4.5,<5",             # execução rápida do Whisper e do NLLB na GPU
+    "sentencepiece>=0.2,<0.3",         # tokenizador do NLLB
+    "numpy>=1.26",
+    "soxr>=0.5,<2",                    # conversão de taxa de amostragem
+    "soundcard>=0.4.4,<0.5",           # microfone e loopback (WASAPI no Windows)
+    # Bibliotecas CUDA para a GPU NVIDIA no Windows/Linux (o driver da NVIDIA precisa estar atualizado)
+    "nvidia-cublas-cu12==12.9.2.10; platform_system == 'Windows'",
+    "nvidia-cudnn-cu12>=9.1,<10; platform_system == 'Windows'",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "jiwer>=3.0"]
+
+[tool.setuptools]
+packages = ["bridge_poc"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
