@@ -17,13 +17,65 @@ from typing import Callable
 
 import numpy as np
 
-from .domain import Lang, Speaker, Transcript, Utterance
+from .domain import Lang, Speaker, Transcript, Utterance, Word
+from .glossary import Glossary
 from .history import History
 from .stt import Transcriber
 from .translate import Translator
 from .vad import SAMPLE_RATE, SegmentEvent, Segmenter, SegmenterConfig, Vad
 
 log = logging.getLogger("bridge.pipeline")
+
+_FLUSH = object()  # sinal interno: entregar fragmentos cujo prazo venceu
+
+_TERMINAL = (".", "!", "?", "…", "»", '"')
+
+
+def is_fragment(text: str, max_words: int = 4) -> bool:
+    """Trecho curto sem pontuação final, ou terminado em vírgula: provavelmente a frase continua."""
+    t = text.strip()
+    if t.endswith(("...", "…")):  # o Whisper usa reticências quando a fala foi interrompida
+        return True
+    if not t or t.endswith(_TERMINAL):
+        return False
+    return t.endswith((",", ";", ":", "—", "-")) or len(t.split()) <= max_words
+
+
+def merge_utterances(a: Utterance, b: Utterance) -> Utterance:
+    """Junta dois trechos finais da mesma pessoa numa única fala."""
+    ta, tb = a.transcript, b.transcript
+    words_b = tb.words
+    if words_b and not words_b[0].text.startswith(" "):
+        first = words_b[0]
+        words_b = (Word(" " + first.text, first.probability, first.uncertain), *words_b[1:])
+    na, nb = max(1, len(ta.words)), max(1, len(tb.words))
+    head, words_a = ta.text.strip(), ta.words
+    if head.endswith(("...", "…")):  # "Então..." + "tomou" → "Então tomou"
+        head = head.rstrip(".…").rstrip()
+        if words_a:
+            last = words_a[-1]
+            words_a = (*words_a[:-1], Word(last.text.rstrip(".…"), last.probability, last.uncertain))
+    merged = Transcript(
+        text=f"{head} {tb.text.strip()}",
+        lang=tb.lang,
+        lang_probability=min(ta.lang_probability, tb.lang_probability),
+        words=words_a + words_b,
+        avg_logprob=(ta.avg_logprob * na + tb.avg_logprob * nb) / (na + nb),
+        no_speech_prob=max(ta.no_speech_prob, tb.no_speech_prob),
+        low_confidence=ta.low_confidence or tb.low_confidence,
+    )
+    timings = dict(b.timings)
+    for k in ("audio_s", "stt_s", "lid_s"):
+        timings[k] = a.timings.get(k, 0.0) + b.timings.get(k, 0.0)
+    return Utterance(
+        segment_id=b.segment_id,
+        source_id=b.source_id,
+        speaker=b.speaker,
+        transcript=merged,
+        is_final=True,
+        speech_end_wall=b.speech_end_wall,
+        timings=timings,
+    )
 
 
 @dataclass
@@ -63,6 +115,8 @@ class Pipeline:
         segmenter_config: SegmenterConfig = SegmenterConfig(),
         history: History | None = None,
         on_discard: Callable[[str, int], None] | None = None,
+        glossary: Glossary | None = None,
+        merge_window_s: float = 1.5,
     ):
         self.stt = transcriber
         self.translator = translator
@@ -72,6 +126,10 @@ class Pipeline:
         self.on_discard = on_discard or (lambda source_id, segment_id: None)
         self.history = history if history is not None else History(enabled=False)
         self.stats = PipelineStats()
+        self.glossary = glossary if glossary is not None else Glossary()
+        self.merge_window_s = merge_window_s
+        self._held: dict[str, tuple[Utterance, float]] = {}
+        self._held_lock = threading.Lock()
 
         self.segmenters = {
             r.source_id: Segmenter(r.source_id, vad_factory(), self._enqueue, segmenter_config)
@@ -101,6 +159,8 @@ class Pipeline:
         with self._cv:
             self._finals.clear()
             self._partials.clear()
+        with self._held_lock:
+            self._held.clear()
         for s in self.segmenters.values():
             s.reset()
 
@@ -120,6 +180,7 @@ class Pipeline:
             self._worker.join(timeout=5)
 
     def flush(self) -> None:
+        """Encerra falas em andamento; fragmentos pendentes saem quando o prazo vencer."""
         for s in self.segmenters.values():
             s.flush()
 
@@ -129,6 +190,8 @@ class Pipeline:
         while time.monotonic() < end:
             with self._cv:
                 empty = not self._finals and not self._partials
+            with self._held_lock:
+                empty = empty and not self._held
             if empty and not self.busy:
                 return True
             time.sleep(0.02)
@@ -164,7 +227,11 @@ class Pipeline:
                 if self._partials:
                     _, ev = self._partials.popitem()
                     return ev
-                self._cv.wait(timeout=0.5)
+                dl = self._next_deadline()
+                if dl is not None and dl <= time.monotonic():
+                    return _FLUSH
+                timeout = 0.5 if dl is None else max(0.01, min(0.5, dl - time.monotonic()))
+                self._cv.wait(timeout=timeout)
         return None
 
     def _run(self) -> None:
@@ -174,7 +241,10 @@ class Pipeline:
                 return
             self._busy.set()
             try:
-                self.process(ev)
+                if ev is _FLUSH:
+                    self.flush_held(only_expired=True)
+                else:
+                    self.process(ev)
             except Exception:  # nunca derruba o app; registra só o tipo do erro
                 log.exception("falha ao processar segmento (conteúdo omitido)")
             finally:
@@ -223,29 +293,65 @@ class Pipeline:
             speech_end_wall=ev.speech_end_wall,
             timings=timings,
         )
-        if ev.is_final:
-            t2 = time.monotonic()
-            utt.target_lang = lang.other
-            utt.translation = self.translator.translate(tr.text, lang, lang.other)
-            timings["translate_s"] = time.monotonic() - t2
-            timings["latency_s"] = time.monotonic() - ev.speech_end_wall
-            timings["audio_s"] = len(ev.audio) / SAMPLE_RATE
-            self.stats.finals += 1
-            self.stats.last_latency_s = timings["latency_s"]
-            self.history.add(utt)
-            log.info(
-                "fala final: fonte=%s idioma=%s audio=%.1fs stt=%.2fs trad=%.2fs latencia=%.2fs",
-                ev.source_id,
-                lang.value,
-                timings["audio_s"],
-                timings["stt_s"],
-                timings["translate_s"],
-                timings["latency_s"],
-            )
-        else:
+        if not ev.is_final:
             self.stats.partials += 1
+            self.on_utterance(utt)
+            return utt
+
+        utt.transcript = self.glossary.correct_transcript(utt.transcript)
+        timings["audio_s"] = len(ev.audio) / SAMPLE_RATE
+        with self._held_lock:
+            held = self._held.pop(ev.source_id, None)
+        if held is not None:
+            prev = held[0]
+            if prev.speaker == utt.speaker:
+                utt = merge_utterances(prev, utt)
+            else:
+                self._emit_final(prev)
+        if self.merge_window_s > 0 and is_fragment(utt.transcript.text):
+            with self._held_lock:
+                self._held[ev.source_id] = (utt, time.monotonic() + self.merge_window_s)
+            with self._cv:
+                self._cv.notify()
+            return None  # aguarda a continuação da frase
+        return self._emit_final(utt)
+
+    def _emit_final(self, utt: Utterance) -> Utterance:
+        """Traduz e entrega uma fala final."""
+        tr = utt.transcript
+        t2 = time.monotonic()
+        utt.target_lang = tr.lang.other
+        translation = self.translator.translate(tr.text, tr.lang, tr.lang.other)
+        utt.translation = self.glossary.correct_text(translation)
+        timings = utt.timings
+        timings["translate_s"] = time.monotonic() - t2
+        timings["latency_s"] = time.monotonic() - utt.speech_end_wall
+        self.stats.finals += 1
+        self.stats.last_latency_s = timings["latency_s"]
+        self.history.add(utt)
+        log.info(
+            "fala final: fonte=%s idioma=%s audio=%.1fs stt=%.2fs trad=%.2fs latencia=%.2fs",
+            utt.source_id,
+            tr.lang.value,
+            timings.get("audio_s", 0.0),
+            timings.get("stt_s", 0.0),
+            timings["translate_s"],
+            timings["latency_s"],
+        )
         self.on_utterance(utt)
         return utt
+
+    def flush_held(self, only_expired: bool = False) -> list[Utterance]:
+        """Entrega fragmentos que esperavam continuação (todos, ou só os vencidos)."""
+        now = time.monotonic()
+        with self._held_lock:
+            keys = [k for k, (_, dl) in self._held.items() if not only_expired or dl <= now]
+            items = [self._held.pop(k)[0] for k in keys]
+        return [self._emit_final(u) for u in items]
+
+    def _next_deadline(self) -> float | None:
+        with self._held_lock:
+            return min((dl for _, dl in self._held.values()), default=None)
 
     def _resolve_speaker(
         self, role: SourceRole, audio: np.ndarray, final: bool

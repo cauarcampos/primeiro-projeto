@@ -1,0 +1,14 @@
+# Glossário do BRIDGE — copie para %LOCALAPPDATA%\bridge\glossario.txt e edite.
+# Uma regra por linha. Linhas com # são comentários.
+#
+# Nomes e palavras de vocês (ajudam o reconhecimento de voz):
+Cauã
+Katya
+# Nomes escritos em cirílico ajudam no reconhecimento do ucraniano:
+Катя
+# (escreva aqui o seu nome do jeito que ela escreve em ucraniano)
+#
+# Correções automáticas:  errado => certo
+# (aplicadas no texto reconhecido e na tradução; palavras inteiras, sem diferenciar maiúsculas)
+Kátia => Katya
+Катія => Катя

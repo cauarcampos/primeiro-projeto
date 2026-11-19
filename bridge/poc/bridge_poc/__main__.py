@@ -21,7 +21,7 @@ import logging
 import sys
 import time
 
-from .config import add_model_args, build_transcriber, build_translator
+from .config import add_model_args, build_transcriber, build_translator, load_glossary
 from .domain import Lang, Speaker, Utterance
 from .history import History
 from .pipeline import Pipeline, SourceRole
@@ -50,6 +50,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     a.add_argument("--sem-filtro-eco", action="store_true",
                    help="não descarta, no microfone, falas no idioma da outra pessoa")
     a.add_argument("--silencio-ms", type=int, default=550, help="pausa que encerra uma fala")
+    a.add_argument("--juntar-ms", type=int, default=1500,
+                   help="espera por continuação de frases cortadas (0 = desliga)")
 
     u = ap.add_argument_group("exibição")
     u.add_argument("--sem-interface", action="store_true", help="mostra as legendas no terminal")
@@ -145,8 +147,12 @@ def main(argv: list[str] | None = None) -> int:
         on_utt = lambda u: holder["w"].post(u)  # noqa: E731
         on_discard = lambda s, i: holder["w"].discard(s, i)  # noqa: E731
 
+    glossary = load_glossary(args)
+    if glossary:
+        print(f"Glossário: {len(glossary.names)} nomes, {len(glossary.corrections)} correções.")
     pipeline = Pipeline(
-        stt, translator, (me, partner), roles, on_utt, SileroStreamingVad, seg_cfg, history, on_discard
+        stt, translator, (me, partner), roles, on_utt, SileroStreamingVad, seg_cfg, history,
+        on_discard, glossary=glossary, merge_window_s=args.juntar_ms / 1000,
     )
     if not args.sem_interface:
         window = SubtitleWindow(

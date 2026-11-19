@@ -41,8 +41,8 @@ def test_computer_mode_speaker_comes_from_channel_and_translates_both_ways():
     p.process(ev("sistema", tone(1, UK_TONE), seg=1))
     p.process(ev("mic", tone(1, PT_TONE), seg=2))
     assert [u.speaker.name for u in out] == ["Katya", "Cauã"]
-    assert out[0].translation == "<pt>привіт коханий" and out[0].target_lang is Lang.PT
-    assert out[1].translation == "<uk>olá amor" and out[1].target_lang is Lang.UK
+    assert out[0].translation == "<pt>привіт коханий!" and out[0].target_lang is Lang.PT
+    assert out[1].translation == "<uk>olá amor." and out[1].target_lang is Lang.UK
     assert tr.calls[0][1:] == (Lang.UK, Lang.PT)
 
 
@@ -126,3 +126,56 @@ def test_end_to_end_threads_pause_and_resume():
         assert len(out) == 2
     finally:
         p.stop()
+
+
+def test_cut_sentence_fragments_are_joined_before_translating():
+    p, out, _, stt, tr = make([SourceRole("mic", speaker=ME)])
+    stt.texts[Lang.PT] = "Então, o Pedro"
+    assert p.process(ev("mic", tone(1), seg=1)) is None  # fragmento: espera continuação
+    stt.texts[Lang.PT] = "tomou a frente para cantar."
+    utt = p.process(ev("mic", tone(1), seg=2))
+    assert utt.transcript.text == "Então, o Pedro tomou a frente para cantar."
+    assert len(tr.calls) == 1 and tr.calls[0][0] == utt.transcript.text
+    assert [u.is_final for u in out] == [True]
+
+
+def test_fragment_is_released_when_nothing_follows():
+    p, out, _, stt, _ = make([SourceRole("mic", speaker=ME)], merge_window_s=0.05)
+    stt.texts[Lang.PT] = "sim"
+    p.start()
+    try:
+        p.feed("mic", np.concatenate([tone(1.0), silence(1.0)]))
+        assert p.wait_idle(5)
+    finally:
+        p.stop()
+    assert [u.transcript.text for u in out] == ["sim"]
+
+
+def test_fragment_from_other_speaker_is_not_merged():
+    p, out, _, stt, _ = make([SourceRole("amb")])
+    stt.texts = {Lang.PT: "então", Lang.UK: "так, звичайно."}
+    p.process(ev("amb", tone(1, PT_TONE), seg=1))
+    p.process(ev("amb", tone(1, UK_TONE), seg=2))
+    assert [(u.speaker.name, u.transcript.text) for u in out] == [("Cauã", "então"), ("Katya", "так, звичайно.")]
+
+
+def test_glossary_corrects_transcript_and_translation():
+    from bridge_poc.glossary import Glossary
+
+    g = Glossary.parse("Kátia => Katya\nКатія => Катя")
+    p, out, _, stt, tr = make([SourceRole("mic", speaker=ME)], glossary=g)
+    stt.texts[Lang.PT] = "oi Kátia, tudo bem?"
+    tr.translate = lambda text, s, t: "привіт Катія, як справи?"
+    utt = p.process(ev("mic", tone(1)))
+    assert utt.transcript.text == "oi Katya, tudo bem?"
+    assert utt.translation == "привіт Катя, як справи?"
+
+
+def test_ellipsis_is_removed_when_joining():
+    p, out, _, stt, tr = make([SourceRole("mic", speaker=ME)])
+    stt.texts[Lang.PT] = "Então o Pedro..."
+    p.process(ev("mic", tone(1), seg=1))
+    stt.texts[Lang.PT] = "tomou a frente."
+    utt = p.process(ev("mic", tone(1), seg=2))
+    assert utt.transcript.text == "Então o Pedro tomou a frente."
+    assert "".join(w.text for w in utt.transcript.words).strip() == utt.transcript.text
