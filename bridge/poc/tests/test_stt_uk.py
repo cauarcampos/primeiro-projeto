@@ -1,4 +1,4 @@
-from bridge_poc.domain import Lang, Transcript, Word
+from bridge_poc.domain import Lang
 from bridge_poc.stt import assess
 from bridge_poc.stt_uk import UkrainianBoostedTranscriber, merge_with_reference
 
