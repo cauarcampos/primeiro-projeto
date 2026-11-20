@@ -6,13 +6,7 @@ import argparse
 import os
 from dataclasses import dataclass
 
-import logging
-
-import numpy as np
-
 from .gpu import prepare_cuda
-
-log = logging.getLogger("bridge.config")
 
 
 def app_dir() -> str:
@@ -22,10 +16,6 @@ def app_dir() -> str:
 
 def default_models_dir() -> str:
     return os.path.join(app_dir(), "modelos")
-
-
-def error_log_path() -> str:
-    return os.path.join(app_dir(), "erros.log")
 
 
 def default_glossary_path() -> str:
@@ -57,13 +47,6 @@ MODELS: dict[str, ModelSpec] = {
         "MIT",
         "modelo leve (pior em ucraniano), ~0,5 GB",
     ),
-    "parakeet-uk": ModelSpec(
-        "ihnatov-yuri/parakeet-tdt-0.6b-v3-uk",
-        "5c4bcfaca501587beaedfd23b72a678bf7194de1",
-        "parakeet-tdt-0.6b-v3-uk",
-        "CC-BY-4.0",
-        "Parakeet UK: reconhecimento especializado em ucraniano, ~2,5 GB (requer instalar_ucraniano.bat)",
-    ),
     "nllb-1.3b": ModelSpec(
         "JustFrederik/nllb-200-distilled-1.3B-ct2-int8",
         "30c36268408177b0fce2bfcfa205d877accd327d",
@@ -81,10 +64,6 @@ MODELS: dict[str, ModelSpec] = {
 }
 
 
-# TranslateGemma 4B (Google, jan/2026), quantizado Q4_K_M, baixado pelo Ollama direto do Hugging Face.
-DEFAULT_LLM = "hf.co/bullerwins/translategemma-4b-it-GGUF:Q4_K_M"
-
-
 def model_path(key_or_path: str, models_dir: str) -> str:
     if key_or_path in MODELS:
         return os.path.join(models_dir, MODELS[key_or_path].folder)
@@ -98,15 +77,6 @@ def add_model_args(ap: argparse.ArgumentParser) -> None:
     g.add_argument("--dispositivo", default="auto", choices=["auto", "cuda", "cpu"])
     g.add_argument("--pasta-modelos", default=default_models_dir())
     g.add_argument("--nomes", default="Cauã, Katya", help="nomes próprios que ajudam o reconhecimento")
-    g.add_argument("--ucraniano", choices=["auto", "parakeet", "whisper"], default="auto",
-                   help="reconhecimento do ucraniano: auto = Parakeet UK se instalado")
-    g.add_argument("--tradutor", choices=["auto", "ia", "nllb"], default="nllb",
-                   help="nllb (padrão, testado); ia/auto = IA local via Ollama (experimental)")
-    g.add_argument("--ia-modelo", default=DEFAULT_LLM)
-    g.add_argument("--ia-direcoes", choices=["uk-pt", "ambas"], default="uk-pt",
-                   help="em quais direções usar a IA (padrão: só ucraniano→português)")
-    g.add_argument("--ia-url", default="http://127.0.0.1:11434")
-    g.add_argument("--ia-backend", choices=["ollama", "openai"], default="ollama")
     g.add_argument(
         "--glossario",
         default=default_glossary_path(),
@@ -129,95 +99,21 @@ def _check(path: str) -> str:
     return path
 
 
-def build_transcriber(args, verbose: bool = True):
+def build_transcriber(args):
     from .stt import FasterWhisperTranscriber
 
     if args.dispositivo != "cpu":
         prepare_cuda()
-    whisper = FasterWhisperTranscriber(
+    return FasterWhisperTranscriber(
         _check(model_path(args.whisper, args.pasta_modelos)),
         device=args.dispositivo,
         initial_prompt=load_glossary(args).prompts(args.nomes),
     )
-    mode = getattr(args, "ucraniano", "whisper")
-    if mode == "whisper":
-        return whisper
-
-    from .stt_uk import ParakeetRecognizer, UkrainianBoostedTranscriber, parakeet_available
-
-    folder = model_path("parakeet-uk", args.pasta_modelos)
-    ready = parakeet_available() and os.path.isdir(folder)
-    if not ready:
-        if mode == "parakeet":
-            raise SystemExit(
-                "Reconhecimento especializado em ucraniano não instalado. Rode instalar_ucraniano.bat"
-            )
-        if verbose:
-            print("Ucraniano: Whisper (rode instalar_ucraniano.bat para mais precisão).")
-        return whisper
-    device = "cpu" if args.dispositivo == "cpu" else "auto"
-    try:
-        parakeet = ParakeetRecognizer(folder, device=device)
-        parakeet(np.zeros(16000, dtype=np.float32))  # teste rápido antes de começar
-    except Exception as e:
-        log.exception("Parakeet UK não carregou")
-        if mode == "parakeet":
-            raise SystemExit(f"Parakeet UK não funcionou: {type(e).__name__}: {e}")
-        if verbose:
-            print(f"Ucraniano: Whisper (o Parakeet UK falhou ao carregar: {type(e).__name__}). "
-                  "Detalhes em erros.log.")
-        return whisper
-    if verbose:
-        print(f"Ucraniano: Parakeet UK ({parakeet.device.upper()}) conferido pelo Whisper.")
-    return UkrainianBoostedTranscriber(whisper, parakeet)
 
 
-class LazyTranslator:
-    """Carrega o NLLB só quando for preciso (economiza memória da placa de vídeo)."""
-
-    def __init__(self, factory):
-        self._factory, self._t = factory, None
-
-    def translate(self, text, src, tgt):
-        if self._t is None:
-            self._t = self._factory()
-        return self._t.translate(text, src, tgt)
-
-
-def build_nllb(args):
+def build_translator(args):
     from .translate import NllbTranslator
 
     if args.dispositivo != "cpu":
         prepare_cuda()
     return NllbTranslator(_check(model_path(args.nllb, args.pasta_modelos)), device=args.dispositivo)
-
-
-def build_translator(args, verbose: bool = True):
-    """'auto': usa a IA local (TranslateGemma) se estiver rodando; senão, o NLLB."""
-    from .domain import Lang
-    from .translate import CheckedTranslator, LlmTranslator, RoutedTranslator
-
-    mode = getattr(args, "tradutor", "nllb")
-    if mode == "nllb":
-        return build_nllb(args)
-    nllb = LazyTranslator(lambda: build_nllb(args))  # só carrega se for preciso
-    llm = LlmTranslator(args.ia_modelo, url=args.ia_url, backend=args.ia_backend, fallback=nllb)
-    problem = llm.check()
-    if problem is None:
-        checked = CheckedTranslator(llm, nllb)
-        if args.ia_direcoes == "ambas":
-            if verbose:
-                print(f"Tradução: IA local ({args.ia_modelo}) nas duas direções, com conferência de fatos.")
-            return checked
-        if verbose:
-            print("Tradução: ucraniano→português pela IA local (português do Brasil); "
-                  "português→ucraniano pelo NLLB. Ambas com conferência de números e datas.")
-        return RoutedTranslator({(Lang.UK, Lang.PT): checked, (Lang.PT, Lang.UK): nllb})
-    if mode == "ia":
-        raise SystemExit(
-            f"A IA de tradução não respondeu em {args.ia_url} ({problem}).\n"
-            "Abra o Ollama ou rode instalar_ia.bat. Para usar o tradutor simples: --tradutor nllb"
-        )
-    if verbose:
-        print("Tradução: NLLB (IA local não encontrada — rode instalar_ia.bat para mais precisão).")
-    return build_nllb(args)

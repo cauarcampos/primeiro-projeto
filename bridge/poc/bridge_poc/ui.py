@@ -291,9 +291,7 @@ class SubtitleWindow:
             t.insert("end", f"{u.speaker.name.upper()}\n", hdr)
         prefix = "≈ " if u.low_confidence else ""
         t.insert("end", prefix + (u.translation or "") + "\n", "trans")
-        if u.translation_warnings:
-            t.insert("end", "confira: " + "; ".join(u.translation_warnings) + "\n", "low")
-        elif u.low_confidence:
+        if u.low_confidence:
             t.insert("end", "baixa confiança no reconhecimento — confirme se necessário\n", "low")
 
     def run(self) -> None:

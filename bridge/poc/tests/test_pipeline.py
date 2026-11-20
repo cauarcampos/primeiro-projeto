@@ -179,15 +179,3 @@ def test_ellipsis_is_removed_when_joining():
     utt = p.process(ev("mic", tone(1), seg=2))
     assert utt.transcript.text == "Então o Pedro tomou a frente."
     assert "".join(w.text for w in utt.transcript.words).strip() == utt.transcript.text
-
-
-def test_translation_failure_still_shows_original():
-    p, out, _, _, tr = make([SourceRole("mic", speaker=ME)])
-
-    def boom(*a):
-        raise RuntimeError("GPU sem memória")
-
-    tr.translate = boom
-    utt = p.process(ev("mic", tone(1)))
-    assert utt.transcript.text == "olá amor." and utt.translation == ""
-    assert utt.translation_warnings == ["tradução falhou"] and out == [utt]

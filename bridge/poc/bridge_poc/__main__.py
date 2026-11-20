@@ -70,30 +70,11 @@ def print_utterance(u: Utterance, show_original: bool = True) -> None:
     if not u.is_final:
         return
     flag = " (≈ baixa confiança)" if u.low_confidence else ""
-    if u.translation_warnings:
-        flag = " (≈ confira: " + "; ".join(u.translation_warnings) + ")"
     if show_original:
         marked = "".join(f"[{w.text.strip()}?] " if w.uncertain else w.text for w in u.transcript.words)
         print(f"\n{u.speaker.name.upper()} — ORIGINAL ({u.transcript.lang.label_pt}): {marked.strip()}")
     label = u.target_lang.label_pt if u.target_lang else ""
     print(f"TRADUÇÃO — {label}: {u.translation}{flag}", flush=True)
-
-
-def _log_errors_to_file() -> None:
-    """Erros técnicos (nunca o conteúdo das falas) vão para erros.log, para diagnóstico."""
-    import os
-
-    from .config import error_log_path
-
-    try:
-        path = error_log_path()
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-        handler = logging.FileHandler(path, encoding="utf-8")
-        handler.setLevel(logging.WARNING)
-        handler.setFormatter(logging.Formatter("%(asctime)s %(name)s %(levelname)s: %(message)s"))
-        logging.getLogger().addHandler(handler)
-    except OSError:
-        pass
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -102,7 +83,6 @@ def main(argv: list[str] | None = None) -> int:
         level=logging.INFO if args.metricas else logging.WARNING,
         format="%(asctime)s %(name)s: %(message)s",
     )
-    _log_errors_to_file()
 
     if args.listar_dispositivos:
         from .audio import list_devices
@@ -211,14 +191,4 @@ def main(argv: list[str] | None = None) -> int:
 
 
 if __name__ == "__main__":
-    try:
-        sys.exit(main())
-    except SystemExit:
-        raise
-    except Exception:
-        logging.getLogger("bridge").exception("erro fatal")
-        from .config import error_log_path
-
-        print(f"\nO BRIDGE parou por um erro. Detalhes em: {error_log_path()}", file=sys.stderr)
-        print("Tente o modo seguro: iniciar_seguro.bat", file=sys.stderr)
-        sys.exit(1)
+    sys.exit(main())

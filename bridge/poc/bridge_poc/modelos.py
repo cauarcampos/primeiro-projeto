@@ -45,8 +45,7 @@ def main(argv: list[str] | None = None) -> None:
             m.repo,
             revision=m.revision,
             local_dir=dest,
-            allow_patterns=["*.bin", "*.json", "*.txt", "*.model", "*.safetensors"],
-            ignore_patterns=["coreml/*", "runs/*", "training_args.bin"],
+            allow_patterns=["*.bin", "*.json", "*.txt", "*.model"],
         )
         print("  ok")
     print("\nPronto. Modelos em:", args.pasta_modelos)
