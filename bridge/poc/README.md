@@ -27,7 +27,7 @@ nenhum áudio ou texto vai para a internet, e não há conta nem assinatura para
   "baixa confiança" em vez de ser apresentado como certo. Uma frase partida por uma pausa
   ("Então, Lakkha Singh… | tomou a frente…") é juntada e traduzida inteira.
 - Tradução local pt⇄uk, segmentação por pausas, legendas parciais, marcação de incerteza,
-  filtro de eco, histórico só em memória, pausa/retomada — 43 testes automáticos passando.
+  filtro de eco, histórico só em memória, pausa/retomada — 65 testes automáticos passando.
 - Janela de legendas (testada em tela virtual).
 
 **Ainda não testado — depende do seu Windows:**
@@ -47,6 +47,44 @@ nenhum áudio ou texto vai para a internet, e não há conta nem assinatura para
    e verifica a GPU. No final deve aparecer `GPU CUDA encontrada (1)`.
 
 Os modelos ficam em `%LOCALAPPDATA%\bridge\modelos`.
+
+## Mais precisão (opcional, recomendado)
+
+Depois do `instalar.bat`, dois complementos aumentam a precisão. Os dois também rodam 100% no PC.
+
+### 1. Reconhecimento especializado em ucraniano: `instalar_ucraniano.bat`
+Usa o **Parakeet UK** (ajustado com ~740 h de ucraniano, boa parte conversa) para transcrever a
+Katya, e o Whisper **confere palavra por palavra**: onde os dois discordam, a palavra fica
+sublinhada como incerta. O português continua com o Whisper.
+
+| Ucraniano, 20 gravações reais (FLEURS) | Erro por palavra |
+|---|---|
+| Whisper large-v3-turbo (padrão) | 7,1% |
+| Whisper large-v3 (maior, mais lento) | 8,0% |
+| Whisper ajustado para ucraniano | 7,4% |
+| **Parakeet UK + conferência do Whisper** | **5,8%** |
+
+Os autores do Parakeet UK relatam a maior diferença justamente em chamadas online: no "outro lado
+da chamada", 10,2% de erro contra 22,8% do Whisper large-v3 (medição deles, indicativa).
+
+Por padrão roda na CPU (soma ~1 s por fala). Para usar a placa de vídeo:
+`instalar_ucraniano.bat gpu` (download maior).
+
+### 2. Tradução por IA local: `instalar_ia.bat`
+Instala o Ollama e o **TranslateGemma 4B** (Google). Com o Ollama aberto, o `iniciar.bat` usa:
+
+- **ucraniano → português pela IA**: português do Brasil ("Como dormiu?", "Ligue para mim quando
+  acordar"), enquanto o NLLB escreve como em Portugal ("Como dormiste?", "Liga-me quando acordares");
+- **português → ucraniano pelo NLLB**: ele trata a Katya por "ти" (íntimo); a IA às vezes usa
+  o formal "ви". Para testar a IA nas duas direções: `iniciar.bat --ia-direcoes ambas`.
+
+Em textos formais os dois empatam (nota chrF++ 48–54 nos dois sentidos). A escolha por direção veio
+de 16 frases de conversa — **peça para a Katya julgar** as traduções para o ucraniano.
+
+### Conferência de fatos (sempre ligada)
+Números, dias da semana e meses do original precisam aparecer na tradução. Se a IA trocar algo
+(num teste ela traduziu "quinta-feira" como "sexta-feira"), o programa usa a tradução do NLLB; se
+os dois falharem, a legenda mostra "≈ confira: dia da semana diferente".
 
 ## Uso com chamada do Instagram
 
@@ -117,9 +155,9 @@ As gravações são de vocês: não as coloque no GitHub.
 
 ## Limitações conhecidas (honestas)
 
-- **Tradução literal**: o NLLB traduz frase a frase, sem contexto da conversa, e às vezes erra o gênero
-  ("querida" × "querido") e usa português de Portugal ("a norte de"). Uma opção com IA contextual
-  (custo de ~US$ 2/mês) pode ser adicionada depois, se vocês quiserem.
+- **Tradução sem contexto**: cada fala é traduzida sozinha (os dois tradutores). Pronomes que dependem
+  da frase anterior podem sair errados. Sem `instalar_ia.bat`, o português sai com jeito de Portugal.
+- **Erros de sentido acontecem**: nos testes o NLLB traduziu "Me conta tudo" como "Ele me conta tudo".
 - **Atraso**: a legenda final aparece depois que a pessoa faz uma pausa (~0,5 s de silêncio) mais o
   tempo de processamento. O texto original aparece antes, enquanto ela fala.
 - **Gírias, nomes e fala muito rápida** reduzem a precisão; palavras incertas ficam sublinhadas em

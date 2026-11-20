@@ -70,6 +70,8 @@ def print_utterance(u: Utterance, show_original: bool = True) -> None:
     if not u.is_final:
         return
     flag = " (≈ baixa confiança)" if u.low_confidence else ""
+    if u.translation_warnings:
+        flag = " (≈ confira: " + "; ".join(u.translation_warnings) + ")"
     if show_original:
         marked = "".join(f"[{w.text.strip()}?] " if w.uncertain else w.text for w in u.transcript.words)
         print(f"\n{u.speaker.name.upper()} — ORIGINAL ({u.transcript.lang.label_pt}): {marked.strip()}")

@@ -20,7 +20,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8", "jiwer>=3.0"]
+dev = ["pytest>=8", "jiwer>=3.0", "sacrebleu>=2.4"]
+# reconhecimento especializado em ucraniano (Parakeet UK); torch é instalado pelo instalar_ucraniano.bat
+ucraniano = ["torch>=2.6", "transformers>=5.23,<6"]
 
 [tool.setuptools]
 packages = ["bridge_poc"]

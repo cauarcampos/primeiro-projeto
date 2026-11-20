@@ -321,7 +321,12 @@ class Pipeline:
         tr = utt.transcript
         t2 = time.monotonic()
         utt.target_lang = tr.lang.other
-        translation = self.translator.translate(tr.text, tr.lang, tr.lang.other)
+        if hasattr(self.translator, "translate_checked"):
+            translation, utt.translation_warnings = self.translator.translate_checked(
+                tr.text, tr.lang, tr.lang.other
+            )
+        else:
+            translation = self.translator.translate(tr.text, tr.lang, tr.lang.other)
         utt.translation = self.glossary.correct_text(translation)
         timings = utt.timings
         timings["translate_s"] = time.monotonic() - t2

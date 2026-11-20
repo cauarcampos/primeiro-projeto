@@ -81,7 +81,8 @@ class Utterance:
     speech_end_wall: float = 0.0  # instante (time.monotonic) em que a fala terminou
     timings: dict[str, float] = field(default_factory=dict)
     created_at: float = field(default_factory=time.monotonic)
+    translation_warnings: list[str] = field(default_factory=list)  # ex.: "dia da semana diferente"
 
     @property
     def low_confidence(self) -> bool:
-        return self.transcript.low_confidence
+        return self.transcript.low_confidence or bool(self.translation_warnings)
