@@ -27,7 +27,7 @@ nenhum áudio ou texto vai para a internet, e não há conta nem assinatura para
   "baixa confiança" em vez de ser apresentado como certo. Uma frase partida por uma pausa
   ("Então, Lakkha Singh… | tomou a frente…") é juntada e traduzida inteira.
 - Tradução local pt⇄uk, segmentação por pausas, legendas parciais, marcação de incerteza,
-  filtro de eco, histórico só em memória, pausa/retomada — 65 testes automáticos passando.
+  filtro de eco, histórico só em memória, pausa/retomada — 68 testes automáticos passando.
 - Janela de legendas (testada em tela virtual).
 
 **Ainda não testado — depende do seu Windows:**
@@ -70,8 +70,10 @@ da chamada", 10,2% de erro contra 22,8% do Whisper large-v3 (medição deles, in
 Por padrão roda na CPU (soma ~1 s por fala). Para usar a placa de vídeo:
 `instalar_ucraniano.bat gpu` (download maior).
 
-### 2. Tradução por IA local: `instalar_ia.bat`
-Instala o Ollama e o **TranslateGemma 4B** (Google). Com o Ollama aberto, o `iniciar.bat` usa:
+### 2. Tradução por IA local: `instalar_ia.bat` (experimental, desligada por padrão)
+Instala o Ollama e o **TranslateGemma 4B** (Google). Ela divide a memória da placa de vídeo com o
+Whisper e o navegador da chamada, por isso não vem ligada. Para usar: `iniciar.bat --tradutor ia`.
+Nesse modo:
 
 - **ucraniano → português pela IA**: português do Brasil ("Como dormiu?", "Ligue para mim quando
   acordar"), enquanto o NLLB escreve como em Portugal ("Como dormiste?", "Liga-me quando acordares");
@@ -85,6 +87,13 @@ de 16 frases de conversa — **peça para a Katya julgar** as traduções para o
 Números, dias da semana e meses do original precisam aparecer na tradução. Se a IA trocar algo
 (num teste ela traduziu "quinta-feira" como "sexta-feira"), o programa usa a tradução do NLLB; se
 os dois falharem, a legenda mostra "≈ confira: dia da semana diferente".
+
+## Se algo parar de funcionar
+
+- Rode **`iniciar_seguro.bat`**: usa só os componentes da primeira versão (Whisper + NLLB).
+- Componentes opcionais que falham são desligados sozinhos e a legenda continua com os básicos.
+- Erros técnicos ficam em `%LOCALAPPDATA%\bridge\erros.log` (nunca o que foi falado).
+  Mande esse arquivo ou um print da janela preta para diagnóstico.
 
 ## Uso com chamada do Instagram
 

@@ -6,7 +6,13 @@ import argparse
 import os
 from dataclasses import dataclass
 
+import logging
+
+import numpy as np
+
 from .gpu import prepare_cuda
+
+log = logging.getLogger("bridge.config")
 
 
 def app_dir() -> str:
@@ -16,6 +22,10 @@ def app_dir() -> str:
 
 def default_models_dir() -> str:
     return os.path.join(app_dir(), "modelos")
+
+
+def error_log_path() -> str:
+    return os.path.join(app_dir(), "erros.log")
 
 
 def default_glossary_path() -> str:
@@ -90,8 +100,8 @@ def add_model_args(ap: argparse.ArgumentParser) -> None:
     g.add_argument("--nomes", default="Cauã, Katya", help="nomes próprios que ajudam o reconhecimento")
     g.add_argument("--ucraniano", choices=["auto", "parakeet", "whisper"], default="auto",
                    help="reconhecimento do ucraniano: auto = Parakeet UK se instalado")
-    g.add_argument("--tradutor", choices=["auto", "ia", "nllb"], default="auto",
-                   help="auto = IA local se disponível, senão NLLB")
+    g.add_argument("--tradutor", choices=["auto", "ia", "nllb"], default="nllb",
+                   help="nllb (padrão, testado); ia/auto = IA local via Ollama (experimental)")
     g.add_argument("--ia-modelo", default=DEFAULT_LLM)
     g.add_argument("--ia-direcoes", choices=["uk-pt", "ambas"], default="uk-pt",
                    help="em quais direções usar a IA (padrão: só ucraniano→português)")
@@ -146,7 +156,17 @@ def build_transcriber(args, verbose: bool = True):
             print("Ucraniano: Whisper (rode instalar_ucraniano.bat para mais precisão).")
         return whisper
     device = "cpu" if args.dispositivo == "cpu" else "auto"
-    parakeet = ParakeetRecognizer(folder, device=device)
+    try:
+        parakeet = ParakeetRecognizer(folder, device=device)
+        parakeet(np.zeros(16000, dtype=np.float32))  # teste rápido antes de começar
+    except Exception as e:
+        log.exception("Parakeet UK não carregou")
+        if mode == "parakeet":
+            raise SystemExit(f"Parakeet UK não funcionou: {type(e).__name__}: {e}")
+        if verbose:
+            print(f"Ucraniano: Whisper (o Parakeet UK falhou ao carregar: {type(e).__name__}). "
+                  "Detalhes em erros.log.")
+        return whisper
     if verbose:
         print(f"Ucraniano: Parakeet UK ({parakeet.device.upper()}) conferido pelo Whisper.")
     return UkrainianBoostedTranscriber(whisper, parakeet)

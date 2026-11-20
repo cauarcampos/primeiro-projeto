@@ -79,12 +79,30 @@ def print_utterance(u: Utterance, show_original: bool = True) -> None:
     print(f"TRADUÇÃO — {label}: {u.translation}{flag}", flush=True)
 
 
+def _log_errors_to_file() -> None:
+    """Erros técnicos (nunca o conteúdo das falas) vão para erros.log, para diagnóstico."""
+    import os
+
+    from .config import error_log_path
+
+    try:
+        path = error_log_path()
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        handler = logging.FileHandler(path, encoding="utf-8")
+        handler.setLevel(logging.WARNING)
+        handler.setFormatter(logging.Formatter("%(asctime)s %(name)s %(levelname)s: %(message)s"))
+        logging.getLogger().addHandler(handler)
+    except OSError:
+        pass
+
+
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     logging.basicConfig(
         level=logging.INFO if args.metricas else logging.WARNING,
         format="%(asctime)s %(name)s: %(message)s",
     )
+    _log_errors_to_file()
 
     if args.listar_dispositivos:
         from .audio import list_devices
@@ -193,4 +211,14 @@ def main(argv: list[str] | None = None) -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except SystemExit:
+        raise
+    except Exception:
+        logging.getLogger("bridge").exception("erro fatal")
+        from .config import error_log_path
+
+        print(f"\nO BRIDGE parou por um erro. Detalhes em: {error_log_path()}", file=sys.stderr)
+        print("Tente o modo seguro: iniciar_seguro.bat", file=sys.stderr)
+        sys.exit(1)

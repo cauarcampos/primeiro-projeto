@@ -13,6 +13,7 @@ Requer o pacote opcional: torch + transformers (instalar_ucraniano.bat).
 from __future__ import annotations
 
 import difflib
+import logging
 import re
 import unicodedata
 
@@ -20,6 +21,8 @@ import numpy as np
 
 from .domain import Lang, Transcript, Word
 from .stt import ConfidenceConfig, Transcriber, is_hallucination
+
+log = logging.getLogger("bridge.stt_uk")
 
 
 def parakeet_available() -> bool:
@@ -99,18 +102,30 @@ def merge_with_reference(
 class UkrainianBoostedTranscriber:
     """Whisper para português e detecção de idioma; Parakeet UK + Whisper para ucraniano."""
 
-    def __init__(self, whisper: Transcriber, parakeet: ParakeetRecognizer):
+    def __init__(self, whisper: Transcriber, parakeet: ParakeetRecognizer, max_failures: int = 3):
         self.whisper = whisper
         self.parakeet = parakeet
         self.device = getattr(whisper, "device", "cpu")
+        self.failures = 0
+        self.max_failures = max_failures
+
+    @property
+    def parakeet_enabled(self) -> bool:
+        return self.failures < self.max_failures
 
     def detect_language(self, audio: np.ndarray):
         return self.whisper.detect_language(audio)
 
     def transcribe(self, audio: np.ndarray, lang: Lang, fast: bool = False) -> Transcript:
-        if lang is not Lang.UK:
+        if lang is not Lang.UK or not self.parakeet_enabled:
             return self.whisper.transcribe(audio, lang, fast)
-        text = self.parakeet(audio)
+        try:
+            text = self.parakeet(audio)
+        except Exception:
+            # nunca deixa a legenda parar: volta ao Whisper (e desliga o Parakeet após 3 falhas)
+            self.failures += 1
+            log.exception("Parakeet UK falhou (%d/%d); usando o Whisper", self.failures, self.max_failures)
+            return self.whisper.transcribe(audio, lang, fast)
         if fast:  # legenda parcial: só o Parakeet, sem conferência
             words = tuple(Word(" " + t, 1.0, False) for t in text.split())
             return Transcript(text, lang, 1.0, words, 0.0, 0.0, False)

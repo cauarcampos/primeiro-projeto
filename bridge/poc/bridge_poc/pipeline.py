@@ -321,12 +321,17 @@ class Pipeline:
         tr = utt.transcript
         t2 = time.monotonic()
         utt.target_lang = tr.lang.other
-        if hasattr(self.translator, "translate_checked"):
-            translation, utt.translation_warnings = self.translator.translate_checked(
-                tr.text, tr.lang, tr.lang.other
-            )
-        else:
-            translation = self.translator.translate(tr.text, tr.lang, tr.lang.other)
+        try:
+            if hasattr(self.translator, "translate_checked"):
+                translation, utt.translation_warnings = self.translator.translate_checked(
+                    tr.text, tr.lang, tr.lang.other
+                )
+            else:
+                translation = self.translator.translate(tr.text, tr.lang, tr.lang.other)
+        except Exception:
+            # mostra pelo menos o original em vez de perder a fala
+            log.exception("falha na tradução (conteúdo omitido)")
+            translation, utt.translation_warnings = "", ["tradução falhou"]
         utt.translation = self.glossary.correct_text(translation)
         timings = utt.timings
         timings["translate_s"] = time.monotonic() - t2

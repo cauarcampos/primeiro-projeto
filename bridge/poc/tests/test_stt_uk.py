@@ -58,3 +58,24 @@ def test_ukrainian_uses_parakeet_text_checked_by_whisper():
 def test_parakeet_hallucination_is_dropped():
     t = UkrainianBoostedTranscriber(FakeTranscriber(), FakeParakeet("Дякую за перегляд!"))
     assert t.transcribe(tone(1), Lang.UK).is_empty
+
+
+class BrokenParakeet:
+    def __call__(self, audio):
+        raise RuntimeError("falha simulada")
+
+
+def test_parakeet_failure_falls_back_to_whisper_and_disables_after_3():
+    w = FakeTranscriber()
+    t = UkrainianBoostedTranscriber(w, BrokenParakeet())
+    for _ in range(4):
+        assert t.transcribe(tone(1), Lang.UK).text == "привіт коханий!"
+    assert t.failures == 3 and not t.parakeet_enabled
+
+
+def test_package_sets_openmp_workaround():
+    import os
+
+    import bridge_poc  # noqa: F401
+
+    assert os.environ.get("KMP_DUPLICATE_LIB_OK") == "TRUE"
