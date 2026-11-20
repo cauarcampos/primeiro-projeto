@@ -9,17 +9,9 @@ from dataclasses import dataclass
 from .gpu import prepare_cuda
 
 
-def app_dir() -> str:
-    base = os.environ.get("LOCALAPPDATA") or os.path.expanduser("~/.local/share")
-    return os.path.join(base, "bridge")
-
-
 def default_models_dir() -> str:
-    return os.path.join(app_dir(), "modelos")
-
-
-def default_glossary_path() -> str:
-    return os.path.join(app_dir(), "glossario.txt")
+    base = os.environ.get("LOCALAPPDATA") or os.path.expanduser("~/.local/share")
+    return os.path.join(base, "bridge", "modelos")
 
 
 @dataclass(frozen=True)
@@ -77,17 +69,6 @@ def add_model_args(ap: argparse.ArgumentParser) -> None:
     g.add_argument("--dispositivo", default="auto", choices=["auto", "cuda", "cpu"])
     g.add_argument("--pasta-modelos", default=default_models_dir())
     g.add_argument("--nomes", default="Cauã, Katya", help="nomes próprios que ajudam o reconhecimento")
-    g.add_argument(
-        "--glossario",
-        default=default_glossary_path(),
-        help="arquivo com nomes e correções (veja glossario.exemplo.txt)",
-    )
-
-
-def load_glossary(args):
-    from .glossary import Glossary
-
-    return Glossary.load(getattr(args, "glossario", None))
 
 
 def _check(path: str) -> str:
@@ -107,7 +88,7 @@ def build_transcriber(args):
     return FasterWhisperTranscriber(
         _check(model_path(args.whisper, args.pasta_modelos)),
         device=args.dispositivo,
-        initial_prompt=load_glossary(args).prompts(args.nomes),
+        initial_prompt=args.nomes or None,
     )
 
 

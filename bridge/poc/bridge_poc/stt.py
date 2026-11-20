@@ -138,7 +138,7 @@ class FasterWhisperTranscriber:
         model: str = "large-v3-turbo",
         device: str = "auto",
         download_root: str | None = None,
-        initial_prompt: str | dict[Lang, str | None] | None = None,
+        initial_prompt: str | None = None,
         confidence: ConfidenceConfig = ConfidenceConfig(),
         cpu_threads: int = 0,
     ):
@@ -152,11 +152,7 @@ class FasterWhisperTranscriber:
             download_root=download_root,
             cpu_threads=cpu_threads,
         )
-        # dica de contexto por idioma (nomes no alfabeto certo)
-        if isinstance(initial_prompt, dict):
-            self._prompts = dict(initial_prompt)
-        else:
-            self._prompts = {lang: initial_prompt for lang in Lang}
+        self._prompt = initial_prompt
         self._cfg = confidence
 
     def detect_language(self, audio: np.ndarray) -> tuple[Lang, float]:
@@ -172,7 +168,7 @@ class FasterWhisperTranscriber:
             condition_on_previous_text=False,
             vad_filter=False,
             word_timestamps=not fast,
-            initial_prompt=self._prompts.get(lang),
+            initial_prompt=self._prompt,
             without_timestamps=fast,
         )
         segments = list(segments)

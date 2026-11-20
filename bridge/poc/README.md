@@ -24,10 +24,9 @@ nenhum áudio ou texto vai para a internet, e não há conta nem assinatura para
   conversa real, com gírias e ruído, terá mais erros — meça com as vozes de vocês (ver abaixo).
 - Teste de ponta a ponta com uma conversa misturando ucraniano e português: falante identificado
   pelo idioma, tradução nos dois sentidos, e um trecho com nomes estrangeiros marcado como
-  "baixa confiança" em vez de ser apresentado como certo. Uma frase partida por uma pausa
-  ("Então, Lakkha Singh… | tomou a frente…") é juntada e traduzida inteira.
+  "baixa confiança" em vez de ser apresentado como certo.
 - Tradução local pt⇄uk, segmentação por pausas, legendas parciais, marcação de incerteza,
-  filtro de eco, histórico só em memória, pausa/retomada — 43 testes automáticos passando.
+  filtro de eco, histórico só em memória, pausa/retomada — 30 testes automáticos passando.
 - Janela de legendas (testada em tela virtual).
 
 **Ainda não testado — depende do seu Windows:**
@@ -85,18 +84,6 @@ python -m bridge_poc arquivo --wav gravacao.wav --sem-interface
 python -m bridge_poc --help                        :: todas as opções
 pytest                                             :: testes automáticos
 ```
-
-### Glossário pessoal (nomes, apelidos, correções)
-Copie `glossario.exemplo.txt` para `%LOCALAPPDATA%\bridge\glossario.txt` e edite:
-
-- uma palavra por linha → o reconhecimento passa a "esperar" esse nome
-  (nomes em cirílico ajudam só o ucraniano; em alfabeto latino, só o português);
-- `errado => certo` → correção automática no texto reconhecido e na tradução.
-
-### Frases cortadas
-Quando alguém faz uma pausa no meio da frase, o trecho curto (ou terminado em vírgula/reticências)
-espera até 1,5 s pela continuação e é traduzido junto com ela. Ajuste com `--juntar-ms 2500`
-ou desligue com `--juntar-ms 0`.
 
 ### Medir a qualidade com as vozes de vocês
 Grave frases (WAV) e coloque, ao lado de cada `frase1.wav`, um `frase1.txt` com o texto exato falado:

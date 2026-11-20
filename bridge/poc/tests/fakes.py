@@ -25,7 +25,7 @@ class FakeTranscriber:
     device = "cpu"
 
     def __init__(self, texts: dict[Lang, str] | None = None, lang_prob: float = 0.95):
-        self.texts = texts or {Lang.PT: "olá amor.", Lang.UK: "привіт коханий!"}
+        self.texts = texts or {Lang.PT: "olá amor", Lang.UK: "привіт коханий"}
         self.lang_prob = lang_prob
         self.calls: list[tuple[Lang, bool]] = []
 
